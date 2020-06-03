@@ -6,7 +6,7 @@ import codecs
 import platform
 
 from subprocess import check_output
-from tempfile
+import tempfile
 from functools import partial
 
 try:
