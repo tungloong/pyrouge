@@ -6,7 +6,7 @@ import codecs
 import platform
 
 from subprocess import check_output
-from tempfile import mkdtemp
+from tempfile
 from functools import partial
 
 try:
@@ -306,7 +306,7 @@ class Rouge155(object):
         if not system_id:
             system_id = 1
         if (not config_file_path) or (not self._config_dir):
-            self._config_dir = mkdtemp()
+            self._config_dir = self._temp_dir
             config_filename = "rouge_conf.xml"
         else:
             config_dir, config_filename = os.path.split(config_file_path)
@@ -361,10 +361,11 @@ class Rouge155(object):
         Returns: ROUGE output as string.
 
         """
-        if split_sentences:
-            self.split_sentences()
-        self.__write_summaries()
-        rouge_output = self.evaluate(system_id, rouge_args)
+        with tempfile.TemporaryDirectory() as self._temp_dir:
+            if split_sentences:
+                self.split_sentences()
+            self.__write_summaries()
+            rouge_output = self.evaluate(system_id, rouge_args)
         return rouge_output
 
     def output_to_dict(self, output):
@@ -477,7 +478,7 @@ class Rouge155(object):
         system and model folders.
 
         """
-        temp_dir = mkdtemp()
+        temp_dir = self._temp_dir
         new_system_dir = os.path.join(temp_dir, "system")
         os.mkdir(new_system_dir)
         new_model_dir = os.path.join(temp_dir, "model")
